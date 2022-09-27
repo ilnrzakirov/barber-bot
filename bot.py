@@ -10,5 +10,10 @@ bot = Bot(token=settings.BOT_TOKEN)
 dispatcher = Dispatcher(bot)
 
 
-executor.start_polling(dispatcher, skip_updates=True)
+@dispatcher.message_handler()
+async def echo(message: types.Message):
+    await message.answer("Hello")
 
+
+logger.info("Бот запущен")
+executor.start_polling(dispatcher, skip_updates=True)
