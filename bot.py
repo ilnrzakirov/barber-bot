@@ -10,7 +10,7 @@ bot = Bot(token=settings.BOT_TOKEN)
 dispatcher = Dispatcher(bot)
 
 
-@dispatcher.message_handler()
+@dispatcher.message_handler(commands=["start", "help"])
 async def echo(message: types.Message):
     await message.answer("Hello")
 
