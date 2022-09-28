@@ -4,6 +4,8 @@
 #
 #    pip-compile requirements/dev_requirements.in
 #
+add-trailing-comma==2.3.0
+    # via -r requirements/dev_requirements.in
 aiogram==2.22.1
     # via -r requirements/dev_requirements.in
 aiohttp==3.8.3
@@ -44,6 +46,8 @@ identify==2.5.5
     # via pre-commit
 idna==3.4
     # via yarl
+isort==5.10.1
+    # via -r requirements/dev_requirements.in
 loguru==0.6.0
     # via -r requirements/dev_requirements.in
 mccabe==0.7.0
@@ -76,6 +80,8 @@ pytz==2022.2.1
     # via babel
 pyyaml==6.0
     # via pre-commit
+tokenize-rt==4.2.1
+    # via add-trailing-comma
 toml==0.10.2
     # via pre-commit
 tomli==2.0.1
