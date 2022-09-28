@@ -2,3 +2,6 @@ aiogram==2.22.1
 loguru==0.6.0
 python-decouple==3.6
 pip-tools==6.8.0
+pre-commit==2.15.0
+flake8==5.0.4
+flake8-quotes==3.3.1
