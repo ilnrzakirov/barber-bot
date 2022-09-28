@@ -9,3 +9,4 @@
 .env
 log.log
 .idea
+__pycache__
