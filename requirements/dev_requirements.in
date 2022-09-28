@@ -1,0 +1,4 @@
+aiogram==2.22.1
+loguru==0.6.0
+python-decouple==3.6
+pip-tools==6.8.0
