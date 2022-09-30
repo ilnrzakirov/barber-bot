@@ -32,9 +32,13 @@ multidict==6.0.2
     # via
     #   aiohttp
     #   yarl
+psycopg2==2.9.3
+    # via -r requirements/requirements.in
 python-decouple==3.6
     # via -r requirements/requirements.in
 pytz==2022.2.1
     # via babel
+sqlalchemy==1.4.41
+    # via -r requirements/requirements.in
 yarl==1.8.1
     # via aiohttp
