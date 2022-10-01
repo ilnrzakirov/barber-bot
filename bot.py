@@ -1,6 +1,11 @@
-from aiogram.utils import executor
+import asyncio
 
-from bot_init import dispatcher
+from aiogram.utils import executor  # noqa F401
+
+from bot_init import (
+    bot,
+    dispatcher,
+)
 from db import (
     BaseModel,
     asinc_engine,
@@ -20,17 +25,18 @@ async def on_startup(_):
     logger.info("Бот запущен")
 
 
-def main():
+async def main():
     client.register_handlers_client(dispatcher)
     admin.register_handlers_admin(dispatcher)
-    executor.start_polling(dispatcher, skip_updates=True, on_startup=on_startup)
+    # executor.start_polling(dispatcher, skip_updates=True, on_startup=on_startup) # noqa f841
     async_engine = asinc_engine(postgres_url)
     session_maker = get_session_maker(async_engine)  # noqa f841
-    proceed_schemas(async_engine, BaseModel.metadata)
+    await proceed_schemas(async_engine, BaseModel.metadata)
+    await dispatcher.start_polling(bot)
 
 
 if __name__ == "__main__":
     try:
-        main()
+        asyncio.run(main())
     except Exception as error:
         print(error)
