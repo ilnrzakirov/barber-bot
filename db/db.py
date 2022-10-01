@@ -12,6 +12,7 @@ BaseModel = declarative_base()
 class HairDay(BaseModel):
     __tablename__ = "hair_days"
 
+    id = Column(Integer, primary_key=True)
     date = Column(Date, nullable=False)
     master_name = Column(VARCHAR(255), nullable=False)
     open = Column(Integer, nullable=False)
