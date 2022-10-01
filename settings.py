@@ -10,3 +10,5 @@ postgres_url = URL.create(
     database="postgres",
     host="localhost",
 )
+admin_list = [158572669, ]
+owner_list = [15857266, ]

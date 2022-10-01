@@ -2,10 +2,14 @@ from aiogram.types import (
     KeyboardButton,
     ReplyKeyboardMarkup,
 )
+from aiogram.types import (
+    InlineKeyboardMarkup,
+    InlineKeyboardButton,
+)
 
-button_get_our_hair_cut = KeyboardButton("/Записатся")
-button_location = KeyboardButton("/Месторасположение")
+button_open_day = KeyboardButton("/open_day")
+button_add_master = KeyboardButton("/add_master")
 
-keyboard_client = ReplyKeyboardMarkup(resize_keyboard=True)
+keyboard_admin = ReplyKeyboardMarkup(resize_keyboard=True)
 
-keyboard_client.add(button_get_our_hair_cut).add(button_location)
+keyboard_admin.add(button_open_day).add(button_add_master)

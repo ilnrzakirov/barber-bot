@@ -21,3 +21,10 @@ class HairDay(BaseModel):
 
     def __str__(self):
         return f"{self.date} - {self.master_name}: {self.open} - {self.close}"
+
+
+class Master(BaseModel):
+    __tablename__ = "master"
+
+    id = Column(Integer, primary_key=True)
+    name = Column(VARCHAR(100), nullable=False)

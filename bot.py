@@ -25,13 +25,14 @@ async def on_startup(_):
     logger.info("Бот запущен")
 
 
+@logger.catch()
 async def main():
     client.register_handlers_client(dispatcher)
     admin.register_handlers_admin(dispatcher)
-    # executor.start_polling(dispatcher, skip_updates=True, on_startup=on_startup) # noqa f841
     async_engine = asinc_engine(postgres_url)
     session_maker = get_session_maker(async_engine)  # noqa f841
     await proceed_schemas(async_engine, BaseModel.metadata)
+    logger.info("Бот запущен")
     await dispatcher.start_polling(bot)
 
 

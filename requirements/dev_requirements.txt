@@ -12,6 +12,8 @@ aiohttp==3.8.3
     # via aiogram
 aiosignal==1.2.0
     # via aiohttp
+alembic==1.8.1
+    # via -r requirements/dev_requirements.in
 async-timeout==4.0.2
     # via aiohttp
 asyncpg==0.26.0
@@ -54,6 +56,10 @@ isort==5.10.1
     # via -r requirements/dev_requirements.in
 loguru==0.6.0
     # via -r requirements/dev_requirements.in
+mako==1.2.3
+    # via alembic
+markupsafe==2.1.1
+    # via mako
 mccabe==0.7.0
     # via flake8
 multidict==6.0.2
@@ -87,7 +93,9 @@ pytz==2022.2.1
 pyyaml==6.0
     # via pre-commit
 sqlalchemy==1.4.41
-    # via -r requirements/dev_requirements.in
+    # via
+    #   -r requirements/dev_requirements.in
+    #   alembic
 tokenize-rt==4.2.1
     # via add-trailing-comma
 toml==0.10.2
