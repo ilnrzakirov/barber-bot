@@ -1,3 +1,5 @@
+import datetime
+
 from aiogram import (
     Dispatcher,
     types,
@@ -9,7 +11,11 @@ from aiogram.dispatcher.filters.state import (
 )
 from loguru import logger
 
-from db.db import Master
+from db.db import (
+    HairDay,
+    Master,
+)
+from keyboards.admin_keyboard import get_master_keyboard
 from settings import session_maker
 
 
@@ -36,7 +42,8 @@ async def init_hair_day(message: types.Message, state: FSMContext):
     async with state.proxy() as data:
         data["date"] = message.text
     await OpenHairDay.next()
-    await message.answer("Выбери мастера")
+    master_keyboard = await get_master_keyboard()
+    await message.answer("Выбери мастера", reply_markup=master_keyboard)
 
 
 async def init_master(message: types.Message, state: FSMContext):
@@ -67,7 +74,17 @@ async def init_dinner_time(message: types.Message, state: FSMContext):
     logger.info(f"Получены данные {message.text} от {message.from_user.username}")
     async with state.proxy() as data:
         data["dinner"] = message.text
-    # day = HairDay()
+    date = datetime.datetime.strptime(data["date"], "%d.%m.%Y")
+    day = HairDay(
+        date.date(),
+        data["master"],
+        int(data["open_time"]),
+        int(data["close_time"]),
+        int(data["dinner"]),
+    )
+    session = session_maker()
+    session.add(day)
+    await session.commit()
     await message.answer("Спасибо, можно записываться")
 
 
