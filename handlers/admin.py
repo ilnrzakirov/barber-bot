@@ -15,7 +15,11 @@ from db.db import (
     HairDay,
     Master,
 )
-from keyboards.admin_keyboard import get_master_keyboard
+from keyboards.admin_keyboard import (
+    delete_master_db,
+    get_master_keyboard,
+    keyboard_admin,
+)
 from settings import session_maker
 
 
@@ -28,6 +32,10 @@ class OpenHairDay(StatesGroup):
 
 
 class HairMaster(StatesGroup):
+    name = State()
+
+
+class DeleteMasterState(StatesGroup):
     name = State()
 
 
@@ -102,7 +110,27 @@ async def init_master_name(message: types.Message, state: FSMContext):
     session = session_maker()
     session.add(master)
     await session.commit()
-    await message.answer("Мастер добавлен")
+    await state.finish()
+    await message.answer("Мастер добавлен", reply_markup=keyboard_admin)
+
+
+async def delete_master(message: types.Message):
+    logger.info(f"Получена команда {message.text} от {message.from_user.username}")
+    master_keyboard = await get_master_keyboard()
+    await DeleteMasterState.name.set()
+    await message.answer("Выберите мастера", reply_markup=master_keyboard)
+
+
+async def run_delete(message: types.Message, state: FSMContext):
+    logger.info(f"Получены данные {message.text} от {message.from_user.username}")
+    async with state.proxy() as data:
+        data["name"] = message.text
+    status = await delete_master_db(data["name"])
+    await state.finish()
+    if status:
+        await message.answer("Мастер успешно удален", reply_markup=keyboard_admin)
+    else:
+        await message.answer("Нет такого мастера", reply_markup=keyboard_admin)
 
 
 def register_handlers_admin(dispatcher: Dispatcher):
@@ -114,3 +142,5 @@ def register_handlers_admin(dispatcher: Dispatcher):
     dispatcher.register_message_handler(init_open_time, state=OpenHairDay.open_time)
     dispatcher.register_message_handler(init_close_time, state=OpenHairDay.close_time)
     dispatcher.register_message_handler(init_dinner_time, state=OpenHairDay.dinner)
+    dispatcher.register_message_handler(delete_master, commands=["delete_master"], state=None)
+    dispatcher.register_message_handler(run_delete, state=DeleteMasterState.name)
