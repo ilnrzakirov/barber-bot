@@ -38,3 +38,18 @@ class Master(BaseModel):
 
     def __init__(self, name):
         self.name = name
+
+
+class Admin(BaseModel):
+    __tablename__ = "admin_list"
+
+    id = Column(Integer, primary_key=True)
+    user_id = Column(Integer, nullable=False)
+    username = Column(VARCHAR(100), nullable=False)
+
+    def __init__(self, id, username):
+        self.user_id = id
+        self.username = username
+
+    def __str__(self):
+        return self.username
