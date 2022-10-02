@@ -10,10 +10,14 @@ from settings import session_maker
 button_open_day = KeyboardButton("/open_day")
 button_add_master = KeyboardButton("/add_master")
 button_delete_master = KeyboardButton("/delete_master")
+add_administrator_button = KeyboardButton("/add_admin")
 
 keyboard_admin = ReplyKeyboardMarkup(resize_keyboard=True)
 
 keyboard_admin.row(button_open_day, button_add_master, button_delete_master)
+
+owner_keyboard = ReplyKeyboardMarkup(resize_keyboard=True)
+owner_keyboard.add(add_administrator_button)
 
 
 async def get_master_keyboard():
