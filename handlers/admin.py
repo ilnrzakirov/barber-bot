@@ -92,6 +92,7 @@ async def init_dinner_time(message: types.Message, state: FSMContext):
     )
     session = session_maker()
     session.add(day)
+    await state.finish()
     await session.commit()
     await message.answer("Спасибо, можно записываться")
 

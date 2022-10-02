@@ -31,4 +31,4 @@ if __name__ == "__main__":
     try:
         asyncio.run(main())
     except Exception as error:
-        print(error)
+        logger.error(error)
