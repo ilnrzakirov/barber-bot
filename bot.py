@@ -10,6 +10,7 @@ from handlers import (
     admin,
     client,
 )
+from handlers.owner import register_handlers_owner
 from utils.loger_init import logger
 
 
@@ -22,6 +23,7 @@ async def on_startup(_):
 async def main():
     client.register_handlers_client(dispatcher)
     admin.register_handlers_admin(dispatcher)
+    register_handlers_owner(dispatcher)
     # await proceed_schemas(async_engine, BaseModel.metadata)
     logger.info("Бот запущен")
     await dispatcher.start_polling(bot)

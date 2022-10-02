@@ -1,10 +1,15 @@
+from typing import List
+
 from aiogram.types import (
     KeyboardButton,
     ReplyKeyboardMarkup,
 )
 from sqlalchemy.future import select
 
-from db.db import Master
+from db.db import (
+    Admin,
+    Master,
+)
 from settings import session_maker
 
 button_open_day = KeyboardButton("/open_day")
@@ -38,3 +43,12 @@ async def delete_master_db(name: str):
     await session.delete(instanse)
     await session.commit()
     return True
+
+
+async def get_admin_list() -> List:
+    session = session_maker()
+    admin_list = await session.execute(select(Admin))
+    result = []
+    for admin in admin_list:
+        result.append(admin[0].user_id)
+    return result

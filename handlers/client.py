@@ -5,22 +5,21 @@ from aiogram import (
 from loguru import logger
 
 from keyboards.admin_keyboard import (
+    get_admin_list,
     keyboard_admin,
     owner_keyboard,
 )
 from keyboards.client_keyboards import keyboard_client
-from settings import (
-    admin_list,
-    owner,
-)
+from settings import owner
 
 
 @logger.catch()
 async def start(message: types.Message):
     logger.info(f"Получена команда {message.text} от {message.from_user.username} - id {message.from_user.id}")
+    admin_list = await get_admin_list()
     if message.from_user.id in admin_list:
         keyboard = keyboard_admin
-    elif message.from_user.id == owner:
+    elif message.from_user.id == int(owner):
         keyboard = owner_keyboard
     else:
         keyboard = keyboard_client
