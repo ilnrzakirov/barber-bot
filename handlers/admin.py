@@ -9,6 +9,9 @@ from aiogram.dispatcher.filters.state import (
 )
 from loguru import logger
 
+from db.db import Master
+from settings import session_maker
+
 
 class OpenHairDay(StatesGroup):
     date = State()
@@ -64,6 +67,7 @@ async def init_dinner_time(message: types.Message, state: FSMContext):
     logger.info(f"Получены данные {message.text} от {message.from_user.username}")
     async with state.proxy() as data:
         data["dinner"] = message.text
+    # day = HairDay()
     await message.answer("Спасибо, можно записываться")
 
 
@@ -77,6 +81,10 @@ async def init_master_name(message: types.Message, state: FSMContext):
     logger.info(f"Получены данные {message.text} от {message.from_user.username}")
     async with state.proxy() as data:
         data["name"] = message.text
+    master = Master(name=message.text)
+    session = session_maker()
+    session.add(master)
+    await session.commit()
     await message.answer("Мастер добавлен")
 
 
@@ -89,4 +97,3 @@ def register_handlers_admin(dispatcher: Dispatcher):
     dispatcher.register_message_handler(init_open_time, state=OpenHairDay.open_time)
     dispatcher.register_message_handler(init_close_time, state=OpenHairDay.close_time)
     dispatcher.register_message_handler(init_dinner_time, state=OpenHairDay.dinner)
-

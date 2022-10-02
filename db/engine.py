@@ -11,7 +11,6 @@ def asinc_engine(url: URL | str) -> AsyncEngine:
     return create_async_engine(url=url, echo=True, encoding="utf-8", pool_pre_ping=True)
 
 
-@DeprecationWarning
 async def proceed_schemas(engin: AsyncEngine, metadata) -> None:
     ...
     # async with engin.begin() as conn:
@@ -19,4 +18,4 @@ async def proceed_schemas(engin: AsyncEngine, metadata) -> None:
 
 
 def get_session_maker(engine: AsyncEngine) -> sessionmaker:
-    return sessionmaker(engine, class_=AsyncSession)
+    return sessionmaker(bind=engine, class_=AsyncSession, expire_on_commit=False)

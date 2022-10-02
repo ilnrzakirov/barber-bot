@@ -6,15 +6,10 @@ from bot_init import (
     bot,
     dispatcher,
 )
-from db import (
-    asinc_engine,
-    get_session_maker,
-)
 from handlers import (
     admin,
     client,
 )
-from settings import postgres_url
 from utils.loger_init import logger
 
 
@@ -27,8 +22,6 @@ async def on_startup(_):
 async def main():
     client.register_handlers_client(dispatcher)
     admin.register_handlers_admin(dispatcher)
-    async_engine = asinc_engine(postgres_url)
-    session_maker = get_session_maker(async_engine)  # noqa f841
     # await proceed_schemas(async_engine, BaseModel.metadata)
     logger.info("Бот запущен")
     await dispatcher.start_polling(bot)

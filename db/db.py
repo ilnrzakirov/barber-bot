@@ -22,9 +22,19 @@ class HairDay(BaseModel):
     def __str__(self):
         return f"{self.date} - {self.master_name}: {self.open} - {self.close}"
 
+    def __init__(self, date, master_name, open_day, close, dinner):
+        self.date = date
+        self.master_name = master_name
+        self.open = open_day
+        self.close = close
+        self.dinner = dinner
+
 
 class Master(BaseModel):
     __tablename__ = "master"
 
     id = Column(Integer, primary_key=True)
     name = Column(VARCHAR(100), nullable=False)
+
+    def __init__(self, name):
+        self.name = name
