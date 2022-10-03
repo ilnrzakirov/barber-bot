@@ -53,3 +53,11 @@ class Admin(BaseModel):
 
     def __str__(self):
         return self.username
+
+
+class Record(BaseModel):
+    __tablename__ = "records"
+
+    id = Column(Integer, primary_key=True)
+    master = Column(VARCHAR(100), nullable=False)
+    record_time = Column(Integer, nullable=False)
