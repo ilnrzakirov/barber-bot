@@ -10,6 +10,7 @@ from loguru import logger
 
 from keyboards.admin_keyboard import (
     get_admin_list,
+    get_master_keyboard,
     keyboard_admin,
     owner_keyboard,
 )
@@ -44,6 +45,15 @@ async def location(message: types.Message):
     await message.answer("Здесь будет изображение карты")
 
 
+@logger.catch()
+async def recording(message: types.Message):
+    logger.info(f"Получена команда {message.text} от {message.from_user.username}")
+    await RecordState.master.set()
+    keyboard = await get_master_keyboard()
+    await message.answer("Выбери мастера", reply_markup=keyboard)
+
+
 def register_handlers_client(dispatcher: Dispatcher):
     dispatcher.register_message_handler(start, commands=["start", "help"])
     dispatcher.register_message_handler(location, commands=["Месторасположение"])
+    dispatcher.register_message_handler(recording, commands=["Записатся"], state=None)
