@@ -2,6 +2,10 @@ from aiogram import (
     Dispatcher,
     types,
 )
+from aiogram.dispatcher.filters.state import (
+    State,
+    StatesGroup,
+)
 from loguru import logger
 
 from keyboards.admin_keyboard import (
@@ -11,6 +15,11 @@ from keyboards.admin_keyboard import (
 )
 from keyboards.client_keyboards import keyboard_client
 from settings import owner
+
+
+class RecordState(StatesGroup):
+    master = State()
+    record_time = State()
 
 
 @logger.catch()
