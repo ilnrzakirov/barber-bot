@@ -81,13 +81,14 @@ async def set_record_date(message: types.Message, state: FSMContext):
             data["date"] = message.text
         date = datetime.datetime.strptime(data["date"], "%d.%m.%Y")
         open_date_keyboard = await get_open_time(data["master"], date.date())
+        await RecordState.next()
         if open_date_keyboard is None:
             await message.answer("Свободных мест нет", reply_markup=keyboard_client)
         else:
             await message.answer("Выберите время", reply_markup=open_date_keyboard)
     except ValueError:
         await state.finish()
-        await message.answer("Произошла ошибка, попробуйте позже")
+        await message.answer("Произошла ошибка, попробуйте позже", reply_markup=keyboard_client)
 
 
 @logger.catch()
@@ -98,7 +99,7 @@ async def set_record_time(message: types.Message, state: FSMContext):
             data["record_time"] = message.text
         date = datetime.datetime.strptime(data["date"], "%d.%m.%Y")
         session = session_maker()
-        record = Record(data["master"], data["record_time"], date.date())
+        record = Record(data["master"], int(data["record_time"]), date.date())
         session.add(record)
         await session.commit()
         await state.finish()
@@ -106,7 +107,7 @@ async def set_record_time(message: types.Message, state: FSMContext):
     except ValueError as error:
         print(error)
         await state.finish()
-        await message.answer("Произошла ошибка, попробуйте позже", reply_markup=keyboard_client)
+        await message.answer("Произошла ошибка", reply_markup=keyboard_client)
 
 
 def register_handlers_client(dispatcher: Dispatcher):
@@ -115,3 +116,4 @@ def register_handlers_client(dispatcher: Dispatcher):
     dispatcher.register_message_handler(recording, commands=["Записатся"], state=None)
     dispatcher.register_message_handler(set_master, state=RecordState.master)
     dispatcher.register_message_handler(set_record_date, state=RecordState.date)
+    dispatcher.register_message_handler(set_record_time, state=RecordState.record_time)

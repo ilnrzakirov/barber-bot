@@ -29,7 +29,7 @@ owner_keyboard.add(add_administrator_button, delete_administrator_button)
 async def get_master_keyboard():
     session = session_maker()
     master_list = await session.execute(select(Master))
-    keyboard_master = ReplyKeyboardMarkup(resize_keyboard=True)
+    keyboard_master = ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True)
     for master in master_list:
         keyboard_master.add(KeyboardButton(master[0].name))
     return keyboard_master
