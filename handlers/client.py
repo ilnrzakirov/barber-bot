@@ -1,25 +1,36 @@
+import datetime
+
 from aiogram import (
     Dispatcher,
     types,
 )
+from aiogram.dispatcher import FSMContext
 from aiogram.dispatcher.filters.state import (
     State,
     StatesGroup,
 )
 from loguru import logger
 
+from db.db import Record
 from keyboards.admin_keyboard import (
     get_admin_list,
     get_master_keyboard,
     keyboard_admin,
     owner_keyboard,
 )
-from keyboards.client_keyboards import keyboard_client
-from settings import owner
+from keyboards.client_keyboards import (
+    get_open_time,
+    keyboard_client,
+)
+from settings import (
+    owner,
+    session_maker,
+)
 
 
 class RecordState(StatesGroup):
     master = State()
+    date = State()
     record_time = State()
 
 
@@ -53,7 +64,54 @@ async def recording(message: types.Message):
     await message.answer("Выбери мастера", reply_markup=keyboard)
 
 
+@logger.catch()
+async def set_master(message: types.Message, state: FSMContext):
+    logger.info(f"Получены данные {message.text} от {message.from_user.username}")
+    async with state.proxy() as data:
+        data["master"] = message.text
+    await RecordState.next()
+    await message.answer("Напиши дату в формате ДД.ММ.ГГГГ")
+
+
+@logger.catch()
+async def set_record_date(message: types.Message, state: FSMContext):
+    try:
+        logger.info(f"Получены данные {message.text} от {message.from_user.username}")
+        async with state.proxy() as data:
+            data["date"] = message.text
+        date = datetime.datetime.strptime(data["date"], "%d.%m.%Y")
+        open_date_keyboard = await get_open_time(data["master"], date.date())
+        if open_date_keyboard is None:
+            await message.answer("Свободных мест нет", reply_markup=keyboard_client)
+        else:
+            await message.answer("Выберите время", reply_markup=open_date_keyboard)
+    except ValueError:
+        await state.finish()
+        await message.answer("Произошла ошибка, попробуйте позже")
+
+
+@logger.catch()
+async def set_record_time(message: types.Message, state: FSMContext):
+    try:
+        logger.info(f"Получены данные {message.text} от {message.from_user.username}")
+        async with state.proxy() as data:
+            data["record_time"] = message.text
+        date = datetime.datetime.strptime(data["date"], "%d.%m.%Y")
+        session = session_maker()
+        record = Record(data["master"], data["record_time"], date.date())
+        session.add(record)
+        await session.commit()
+        await state.finish()
+        await message.answer("Спасибо, записал", reply_markup=keyboard_client)
+    except ValueError as error:
+        print(error)
+        await state.finish()
+        await message.answer("Произошла ошибка, попробуйте позже", reply_markup=keyboard_client)
+
+
 def register_handlers_client(dispatcher: Dispatcher):
     dispatcher.register_message_handler(start, commands=["start", "help"])
     dispatcher.register_message_handler(location, commands=["Месторасположение"])
     dispatcher.register_message_handler(recording, commands=["Записатся"], state=None)
+    dispatcher.register_message_handler(set_master, state=RecordState.master)
+    dispatcher.register_message_handler(set_record_date, state=RecordState.date)

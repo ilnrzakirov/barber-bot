@@ -1,3 +1,5 @@
+import datetime
+
 from sqlalchemy import (
     VARCHAR,
     Column,
@@ -61,3 +63,9 @@ class Record(BaseModel):
     id = Column(Integer, primary_key=True)
     master = Column(VARCHAR(100), nullable=False)
     record_time = Column(Integer, nullable=False)
+    date = Column(Date, nullable=False)
+
+    def __init__(self, master: str, time: int, date: datetime.datetime.date):
+        self.master = master
+        self.record_time = time
+        self.date = date
