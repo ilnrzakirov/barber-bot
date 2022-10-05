@@ -69,3 +69,15 @@ class Record(BaseModel):
         self.master = master
         self.record_time = time
         self.date = date
+
+
+class Feedback(BaseModel):
+    __tablename__ = "feedback"
+
+    id = Column(Integer, primary_key=True)
+    master = Column(VARCHAR(100), nullable=True)
+    feedback = Column(VARCHAR(1500), nullable=True)
+
+    def __init__(self, master: str, message: str):
+        self.master = master
+        self.feedback = message

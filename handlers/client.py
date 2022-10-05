@@ -34,6 +34,11 @@ class RecordState(StatesGroup):
     record_time = State()
 
 
+class Feedback(StatesGroup):
+    master = State()
+    feedback = State()
+
+
 @logger.catch()
 async def start(message: types.Message):
     logger.info(f"Получена команда {message.text} от {message.from_user.username} - id {message.from_user.id}")
