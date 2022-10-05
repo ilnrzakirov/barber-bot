@@ -11,7 +11,10 @@ from aiogram.dispatcher.filters.state import (
 )
 from loguru import logger
 
-from db.db import Record
+from db.db import (
+    Feedback,
+    Record,
+)
 from keyboards.admin_keyboard import (
     get_admin_list,
     get_master_keyboard,
@@ -34,7 +37,7 @@ class RecordState(StatesGroup):
     record_time = State()
 
 
-class Feedback(StatesGroup):
+class FeedbackState(StatesGroup):
     master = State()
     feedback = State()
 
@@ -115,6 +118,36 @@ async def set_record_time(message: types.Message, state: FSMContext):
         await message.answer("Произошла ошибка", reply_markup=keyboard_client)
 
 
+@logger.catch()
+async def add_feedback(message: types.Message):
+    logger.info(f"Получена команда {message.text} от {message.from_user.username}")
+    await FeedbackState.master.set()
+    keyboard = await get_master_keyboard()
+    await message.answer("Выбери мастера", reply_markup=keyboard)
+
+
+@logger.catch()
+async def set_master_feedback(message: types.Message, state: FSMContext):
+    logger.info(f"Получены данные {message.text} от {message.from_user.username}")
+    async with state.proxy() as data:
+        data["master"] = message.text
+    await FeedbackState.next()
+    await message.answer("Текст отзыва")
+
+
+@logger.catch()
+async def set_feedback_text(message: types.Message, state: FSMContext):
+    logger.info(f"Получены данные {message.text} от {message.from_user.username}")
+    async with state.proxy() as data:
+        data["feedback"] = message.text
+    session = session_maker()
+    feedback = Feedback(master=data["master"], message=data["feedback"])
+    session.add(feedback)
+    await session.commit()
+    await state.finish()
+    await message.answer("Спасибо за отзыв")
+
+
 def register_handlers_client(dispatcher: Dispatcher):
     dispatcher.register_message_handler(start, commands=["start", "help"])
     dispatcher.register_message_handler(location, commands=["Месторасположение"])
@@ -122,3 +155,6 @@ def register_handlers_client(dispatcher: Dispatcher):
     dispatcher.register_message_handler(set_master, state=RecordState.master)
     dispatcher.register_message_handler(set_record_date, state=RecordState.date)
     dispatcher.register_message_handler(set_record_time, state=RecordState.record_time)
+    dispatcher.register_message_handler(add_feedback, commands=["Отзыв"], state=None)
+    dispatcher.register_message_handler(set_master_feedback, state=FeedbackState.master)
+    dispatcher.register_message_handler(set_feedback_text, state=FeedbackState.feedback)

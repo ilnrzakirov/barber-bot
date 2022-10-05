@@ -14,10 +14,11 @@ from settings import session_maker
 
 button_get_our_hair_cut = KeyboardButton("/Записатся")
 button_location = KeyboardButton("/Месторасположение")
+button_feedback = KeyboardButton("/Отзыв")
 
 keyboard_client = ReplyKeyboardMarkup(resize_keyboard=True)
 
-keyboard_client.add(button_get_our_hair_cut).add(button_location)
+keyboard_client.add(button_get_our_hair_cut).add(button_location).add(button_feedback)
 
 
 async def get_open_time(name: str, date: datetime.date):
