@@ -145,7 +145,7 @@ async def set_feedback_text(message: types.Message, state: FSMContext):
     session.add(feedback)
     await session.commit()
     await state.finish()
-    await message.answer("Спасибо за отзыв")
+    await message.answer("Спасибо за отзыв", reply_markup=keyboard_client)
 
 
 def register_handlers_client(dispatcher: Dispatcher):
