@@ -17,6 +17,7 @@ from db.db import (
 )
 from keyboards.admin_keyboard import (
     delete_master_db,
+    get_all_feedback,
     get_master_keyboard,
     keyboard_admin,
 )
@@ -134,6 +135,12 @@ async def run_delete(message: types.Message, state: FSMContext):
         await message.answer("Нет такого мастера", reply_markup=keyboard_admin)
 
 
+async def get_feedbacks(message: types.Message):
+    logger.info(f"Получена команда {message.text} от {message.from_user.username}")
+    msg = await get_all_feedback()
+    await message.answer(msg, reply_markup=keyboard_admin)
+
+
 def register_handlers_admin(dispatcher: Dispatcher):
     dispatcher.register_message_handler(open_hair_day, commands=["open_day"], state=None)
     dispatcher.register_message_handler(init_hair_day, state=OpenHairDay.date)
@@ -145,3 +152,4 @@ def register_handlers_admin(dispatcher: Dispatcher):
     dispatcher.register_message_handler(init_dinner_time, state=OpenHairDay.dinner)
     dispatcher.register_message_handler(delete_master, commands=["delete_master"], state=None)
     dispatcher.register_message_handler(run_delete, state=DeleteMasterState.name)
+    dispatcher.register_message_handler(get_feedbacks, commands=["feedbacks"])

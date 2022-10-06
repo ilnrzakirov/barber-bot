@@ -8,6 +8,7 @@ from sqlalchemy.future import select
 
 from db.db import (
     Admin,
+    Feedback,
     Master,
 )
 from settings import session_maker
@@ -15,12 +16,13 @@ from settings import session_maker
 button_open_day = KeyboardButton("/open_day")
 button_add_master = KeyboardButton("/add_master")
 button_delete_master = KeyboardButton("/delete_master")
+button_see_feedback = KeyboardButton("/feedbacks")
 add_administrator_button = KeyboardButton("/add_admin")
 delete_administrator_button = KeyboardButton("/delete_admin")
 
 keyboard_admin = ReplyKeyboardMarkup(resize_keyboard=True)
 
-keyboard_admin.row(button_open_day, button_add_master, button_delete_master)
+keyboard_admin.row(button_open_day, button_add_master, button_delete_master).add(button_see_feedback)
 
 owner_keyboard = ReplyKeyboardMarkup(resize_keyboard=True)
 owner_keyboard.add(add_administrator_button, delete_administrator_button)
@@ -81,3 +83,10 @@ async def get_admin_list_keyboard():
     for key, value in admin_dict.items():
         keyboard_admin_list.insert(KeyboardButton(f"{value}-{key}"))
     return keyboard_admin_list
+
+
+async def get_all_feedback():
+    session = session_maker()
+    qs = await session.execute(select(Feedback).order_by(Feedback.id))
+    text = "\n".join([f"{item[0].master} - {item[0].feedback}" for item in qs])
+    return text
