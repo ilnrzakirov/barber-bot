@@ -8,6 +8,9 @@ from sqlalchemy.orm import sessionmaker
 
 
 def asinc_engine(url: URL | str) -> AsyncEngine:
+    """
+        Асинхронный движок БД
+    """
     return create_async_engine(url=url, echo=True, encoding="utf-8", pool_pre_ping=True)
 
 
