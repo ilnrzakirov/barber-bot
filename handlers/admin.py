@@ -25,6 +25,9 @@ from settings import session_maker
 
 
 class OpenHairDay(StatesGroup):
+    """
+        Стейт для открытия рабочего дня
+    """
     date = State()
     master = State()
     open_time = State()
@@ -33,6 +36,9 @@ class OpenHairDay(StatesGroup):
 
 
 class HairMaster(StatesGroup):
+    """
+        Стейт мастера
+    """
     name = State()
 
 
@@ -41,6 +47,9 @@ class DeleteMasterState(StatesGroup):
 
 
 async def open_hair_day(message: types.Message):
+    """
+        Корутина добавления рабочего дня. Принимает дату
+    """
     logger.info(f"Получена команда {message.text} от {message.from_user.username}")
     await OpenHairDay.date.set()
     await message.answer("Напиши дату в формате ДД.ММ.ГГГГ")
