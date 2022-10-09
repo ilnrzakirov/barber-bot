@@ -12,6 +12,9 @@ BaseModel = declarative_base()
 
 
 class HairDay(BaseModel):
+    """
+        Описане таблицы рабочих дней мастеров
+    """
     __tablename__ = "hair_days"
 
     id = Column(Integer, primary_key=True)
@@ -33,6 +36,9 @@ class HairDay(BaseModel):
 
 
 class Master(BaseModel):
+    """
+        Описание таблицы Мастеров
+    """
     __tablename__ = "master"
 
     id = Column(Integer, primary_key=True)
@@ -43,6 +49,9 @@ class Master(BaseModel):
 
 
 class Admin(BaseModel):
+    """
+        Описание таблицы Администраторов
+    """
     __tablename__ = "admin_list"
 
     id = Column(Integer, primary_key=True)
@@ -58,6 +67,9 @@ class Admin(BaseModel):
 
 
 class Record(BaseModel):
+    """
+        Описание таблицы записей на стрижку
+    """
     __tablename__ = "records"
 
     id = Column(Integer, primary_key=True)
@@ -72,6 +84,9 @@ class Record(BaseModel):
 
 
 class Feedback(BaseModel):
+    """
+        Описание таблицы отзывов
+    """
     __tablename__ = "feedback"
 
     id = Column(Integer, primary_key=True)
