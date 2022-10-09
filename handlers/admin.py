@@ -56,6 +56,9 @@ async def open_hair_day(message: types.Message):
 
 
 async def init_hair_day(message: types.Message, state: FSMContext):
+    """
+        Корутина доавбления мастера в Стейт рабочего дня
+    """
     logger.info(f"Получены данные {message.text} от {message.from_user.username}")
     async with state.proxy() as data:
         data["date"] = message.text
