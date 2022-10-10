@@ -68,6 +68,12 @@ async def init_hair_day(message: types.Message, state: FSMContext):
 
 
 async def init_master(message: types.Message, state: FSMContext):
+    """
+        Корутина записывает данные о мастере
+    :param message: Message
+    :param state: FSMContext
+    :return: message.answer
+    """
     logger.info(f"Получены данные {message.text} от {message.from_user.username}")
     async with state.proxy() as data:
         data["master"] = message.text
@@ -76,6 +82,12 @@ async def init_master(message: types.Message, state: FSMContext):
 
 
 async def init_open_time(message: types.Message, state: FSMContext):
+    """
+        Корутина записывет данные о начале рабочего дня
+    :param message: Message
+    :param state: FSMContext
+    :return: message.answer
+    """
     logger.info(f"Получены данные {message.text} от {message.from_user.username}")
     async with state.proxy() as data:
         data["open_time"] = message.text
@@ -84,6 +96,12 @@ async def init_open_time(message: types.Message, state: FSMContext):
 
 
 async def init_close_time(message: types.Message, state: FSMContext):
+    """
+        Корутина записывает данные о времени окончания рабочего дня
+    :param message: Message
+    :param state: FSMContext
+    :return: message.answer
+    """
     logger.info(f"Получены данные {message.text} от {message.from_user.username}")
     async with state.proxy() as data:
         data["close_time"] = message.text
@@ -92,6 +110,12 @@ async def init_close_time(message: types.Message, state: FSMContext):
 
 
 async def init_dinner_time(message: types.Message, state: FSMContext):
+    """
+        Корутина записывает данные о времени обеда. Записывает данные о дне в БД и закрывает стейт
+    :param message: Message
+    :param state: FSMContext
+    :return: message.answer
+    """
     logger.info(f"Получены данные {message.text} от {message.from_user.username}")
     async with state.proxy() as data:
         data["dinner"] = message.text
@@ -111,12 +135,23 @@ async def init_dinner_time(message: types.Message, state: FSMContext):
 
 
 async def create_master(message: types.Message):
+    """
+        Корутина создает мастера
+    :param message: Message
+    :return: Message.answer
+    """
     logger.info(f"Получены данные {message.text} от {message.from_user.username}")
     await HairMaster.name.set()
     await message.answer("Как зовут мастера?")
 
 
 async def init_master_name(message: types.Message, state: FSMContext):
+    """
+        Корутина принимает имя мастера и записывает в БД. Закрывает стейт
+    :param message: Message
+    :param state: FSMContext
+    :return: Message.answer
+    """
     logger.info(f"Получены данные {message.text} от {message.from_user.username}")
     async with state.proxy() as data:
         data["name"] = message.text
@@ -129,6 +164,11 @@ async def init_master_name(message: types.Message, state: FSMContext):
 
 
 async def delete_master(message: types.Message):
+    """
+        Корутина для удаления мастера
+    :param message: Message
+    :return: reply_markup
+    """
     logger.info(f"Получена команда {message.text} от {message.from_user.username}")
     master_keyboard = await get_master_keyboard()
     await DeleteMasterState.name.set()
@@ -136,6 +176,12 @@ async def delete_master(message: types.Message):
 
 
 async def run_delete(message: types.Message, state: FSMContext):
+    """
+        Корутина принимает имя мастера и удалет из БД
+    :param message: Message
+    :param state: FSMContext
+    :return: reply_markup
+    """
     logger.info(f"Получены данные {message.text} от {message.from_user.username}")
     async with state.proxy() as data:
         data["name"] = message.text
@@ -148,12 +194,22 @@ async def run_delete(message: types.Message, state: FSMContext):
 
 
 async def get_feedbacks(message: types.Message):
+    """
+        Корутна для просмотра отзывов
+    :param message: Message
+    :return: Message.answer
+    """
     logger.info(f"Получена команда {message.text} от {message.from_user.username}")
     msg = await get_all_feedback()
     await message.answer(msg, reply_markup=keyboard_admin)
 
 
 def register_handlers_admin(dispatcher: Dispatcher):
+    """
+        Функция для регистрации хендлеров
+    :param dispatcher: Dispatcher
+    :return: Хендлер
+    """
     dispatcher.register_message_handler(open_hair_day, commands=["open_day"], state=None)
     dispatcher.register_message_handler(init_hair_day, state=OpenHairDay.date)
     dispatcher.register_message_handler(create_master, commands=["add_master"], state=None)
