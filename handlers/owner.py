@@ -19,21 +19,38 @@ from settings import session_maker
 
 
 class AdminState(StatesGroup):
+    """
+        Стейт для добавления администраторов
+    """
     user_id = State()
     username = State()
 
 
 class AdminDeleteState(StatesGroup):
+    """
+        Стейт для удаления администраторов
+    """
     user_id = State()
 
 
 async def add_admin(message: types.Message):
+    """
+        Хендлер для добавления администратора
+    :param message: Message
+    :return: Message.answer
+    """
     logger.info(f"Получена команда {message.text} от {message.from_user.username}")
     await AdminState.user_id.set()
     await message.answer("ID телеграма")
 
 
 async def add_admin_user_id(message: types.Message, state: FSMContext):
+    """
+        Хендлер получчает id телеграма администратороа
+    :param message: Message
+    :param state: FSMContext
+    :return: Message.answer
+    """
     logger.info(f"Получены данные {message.text} от {message.from_user.username}")
     async with state.proxy() as data:
         data["user_id"] = message.text
@@ -42,6 +59,12 @@ async def add_admin_user_id(message: types.Message, state: FSMContext):
 
 
 async def add_admin_username(message: types.Message, state: FSMContext):
+    """
+        Хендлер записывает в БД администратора и закрывает стейт
+    :param message: Message
+    :param state: FSMContext
+    :return: Message.answer
+    """
     logger.info(f"Получены данные {message.text} от {message.from_user.username}")
     async with state.proxy() as data:
         data["username"] = message.text
@@ -54,6 +77,11 @@ async def add_admin_username(message: types.Message, state: FSMContext):
 
 
 async def delete_admin(message: types.Message):
+    """
+        Хендлер для удалаения администратора
+    :param message: Message
+    :return: ReplyKeyboardMarkup
+    """
     logger.info(f"Получена команда {message.text} от {message.from_user.username}")
     await AdminDeleteState.user_id.set()
     keyboard = await get_admin_list_keyboard()
@@ -61,6 +89,12 @@ async def delete_admin(message: types.Message):
 
 
 async def run_delete_admin(message: types.Message, state: FSMContext):
+    """
+        Хендлер удаляет из БД администратора, возвращяет статус операции
+    :param message: Message
+    :param state: FSMContext
+    :return: ReplyKeyboardMarkup
+    """
     logger.info(f"Получены данные {message.text} от {message.from_user.username}")
     user_id = message.text.split("-")[1]
     async with state.proxy() as data:
@@ -74,6 +108,11 @@ async def run_delete_admin(message: types.Message, state: FSMContext):
 
 
 def register_handlers_owner(dispatcher: Dispatcher):
+    """
+        Функция для регистрации хендлеров
+    :param dispatcher: Dispatcher
+    :return: Хендлер
+    """
     dispatcher.register_message_handler(add_admin, commands=["add_admin"], state=None)
     dispatcher.register_message_handler(add_admin_user_id, state=AdminState.user_id)
     dispatcher.register_message_handler(add_admin_username, state=AdminState.username)
