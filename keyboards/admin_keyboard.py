@@ -29,6 +29,10 @@ owner_keyboard.add(add_administrator_button, delete_administrator_button)
 
 
 async def get_master_keyboard():
+    """
+        Функция создает и возвращяет клавиатуру с именами мастеров
+    :return: ReplyKeyboardMarkup
+    """
     session = session_maker()
     master_list = await session.execute(select(Master))
     keyboard_master = ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True)
@@ -38,6 +42,11 @@ async def get_master_keyboard():
 
 
 async def delete_master_db(name: str):
+    """
+        Удаление мастера из БД
+    :param name: str
+    :return: bool (true в случае успеха)
+    """
     session = session_maker()
     master = await session.execute(select(Master).where(Master.name == name))
     instance = master.scalars().first()
@@ -49,6 +58,10 @@ async def delete_master_db(name: str):
 
 
 async def get_admin_list() -> List:
+    """
+        Функция создает и возвращяет список администратов
+    :return: List
+    """
     session = session_maker()
     admin_list = await session.execute(select(Admin))
     result = []
@@ -58,6 +71,11 @@ async def get_admin_list() -> List:
 
 
 async def delete_admin_db(user_id: int):
+    """
+        Удаление администратора из БД
+    :param user_id: int (id телеграмм чата администратора)
+    :return: bool (True в случае успеха)
+    """
     session = session_maker()
     admin = await session.execute(select(Admin).where(Admin.user_id == user_id))
     instance = admin.scalars().first()
@@ -69,6 +87,10 @@ async def delete_admin_db(user_id: int):
 
 
 async def get_admin_dict():
+    """
+        Создает и возвращяет словарь {id: name}
+    :return: dict
+    """
     session = session_maker()
     admin_list = await session.execute(select(Admin))
     result = {}
@@ -78,6 +100,10 @@ async def get_admin_dict():
 
 
 async def get_admin_list_keyboard():
+    """
+        Создает и возвращяет клавиатуру с администраторами
+    :return: ReplyKeyboardMarkup
+    """
     admin_dict = await get_admin_dict()
     keyboard_admin_list = ReplyKeyboardMarkup(resize_keyboard=True)
     for key, value in admin_dict.items():
@@ -86,6 +112,10 @@ async def get_admin_list_keyboard():
 
 
 async def get_all_feedback():
+    """
+        Возвращяет текст всех отзывов
+    :return: str
+    """
     session = session_maker()
     qs = await session.execute(select(Feedback).order_by(Feedback.id))
     text = "\n".join([f"{item[0].master} - {item[0].feedback}" for item in qs])
