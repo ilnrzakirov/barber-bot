@@ -44,6 +44,11 @@ class FeedbackState(StatesGroup):
 
 @logger.catch()
 async def start(message: types.Message):
+    """
+        Хендлер отвечающий на команду старт
+    :param message: Message
+    :return: Message.answer
+    """
     logger.info(f"Получена команда {message.text} от {message.from_user.username} - id {message.from_user.id}")
     admin_list = await get_admin_list()
     if message.from_user.id == int(owner):
@@ -60,12 +65,22 @@ async def start(message: types.Message):
 
 @logger.catch()
 async def location(message: types.Message):
+    """
+        Хендлер отвечает на команду местоположение
+    :param message: Message
+    :return: Message.answer
+    """
     logger.info(f"Получена команда {message.text} от {message.from_user.username}")
     await message.answer("Здесь будет изображение карты")
 
 
 @logger.catch()
 async def recording(message: types.Message):
+    """
+        Хендлер получает команду записи на стрижку и отправляет клавиатуру для выбора мастера
+    :param message: Message
+    :return: Message.answer
+    """
     logger.info(f"Получена команда {message.text} от {message.from_user.username}")
     await RecordState.master.set()
     keyboard = await get_master_keyboard()
@@ -74,6 +89,12 @@ async def recording(message: types.Message):
 
 @logger.catch()
 async def set_master(message: types.Message, state: FSMContext):
+    """
+        Хендлер получает мастера и отправляет сообщение о выборе даты для стрижки
+    :param message: Message
+    :param state: FSMContext
+    :return: Message.answer
+    """
     logger.info(f"Получены данные {message.text} от {message.from_user.username}")
     async with state.proxy() as data:
         data["master"] = message.text
@@ -83,6 +104,13 @@ async def set_master(message: types.Message, state: FSMContext):
 
 @logger.catch()
 async def set_record_date(message: types.Message, state: FSMContext):
+    """
+        Хендлер устанавливает дату стрижки и отправляет клавиатуру с свободными часами в случае успеха, и сообщение
+        о том что свободных мест нет. При получении исключении выдаст ошибку и попросит повторить позже.
+    :param message: Message
+    :param state: FSMContext
+    :return: Message.answer
+    """
     try:
         logger.info(f"Получены данные {message.text} от {message.from_user.username}")
         async with state.proxy() as data:
@@ -101,6 +129,13 @@ async def set_record_date(message: types.Message, state: FSMContext):
 
 @logger.catch()
 async def set_record_time(message: types.Message, state: FSMContext):
+    """
+        Хендлер устанавливает время стрижки, создает запись в БД, и закрывает стейт.
+        Возвращяет сообщение о успешности/неуспешности
+    :param message: Message
+    :param state: FSMContext
+    :return: Message.answer
+    """
     try:
         logger.info(f"Получены данные {message.text} от {message.from_user.username}")
         async with state.proxy() as data:
@@ -120,6 +155,11 @@ async def set_record_time(message: types.Message, state: FSMContext):
 
 @logger.catch()
 async def add_feedback(message: types.Message):
+    """
+        Хендлер отвечает на команду отзыв. Возвращяет клавиатуру с именами мастеров для выбора
+    :param message: Message
+    :return: Message.answer
+    """
     logger.info(f"Получена команда {message.text} от {message.from_user.username}")
     await FeedbackState.master.set()
     keyboard = await get_master_keyboard()
@@ -128,6 +168,12 @@ async def add_feedback(message: types.Message):
 
 @logger.catch()
 async def set_master_feedback(message: types.Message, state: FSMContext):
+    """
+        Хендлер устанавливает мастера для отзыва.
+    :param message: Message
+    :param state: FSMContext
+    :return: Message.answer
+    """
     logger.info(f"Получены данные {message.text} от {message.from_user.username}")
     async with state.proxy() as data:
         data["master"] = message.text
@@ -137,6 +183,12 @@ async def set_master_feedback(message: types.Message, state: FSMContext):
 
 @logger.catch()
 async def set_feedback_text(message: types.Message, state: FSMContext):
+    """
+        Хендлер записывает в БД отзыв, закрывает стейт.
+    :param message: Message
+    :param state: FSMContext
+    :return: Message.answer
+    """
     logger.info(f"Получены данные {message.text} от {message.from_user.username}")
     async with state.proxy() as data:
         data["feedback"] = message.text
@@ -149,6 +201,11 @@ async def set_feedback_text(message: types.Message, state: FSMContext):
 
 
 def register_handlers_client(dispatcher: Dispatcher):
+    """
+        Функция регистрации хендлеров
+    :param dispatcher: Dispatcher
+    :return: Хендер
+    """
     dispatcher.register_message_handler(start, commands=["start", "help"])
     dispatcher.register_message_handler(location, commands=["Месторасположение"])
     dispatcher.register_message_handler(recording, commands=["Записатся"], state=None)
