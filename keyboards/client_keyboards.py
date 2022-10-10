@@ -22,6 +22,12 @@ keyboard_client.add(button_get_our_hair_cut).add(button_location).add(button_fee
 
 
 async def get_open_time(name: str, date: datetime.date):
+    """
+        Функция создает клавиатуру свободных часов и возвращяет
+    :param name: str Имя мастера
+    :param date: datetime.date
+    :return: ReplyKeyboardMarkup
+    """
     time_keyboards = ReplyKeyboardMarkup(resize_keyboard=True)
     session = session_maker()
     open_time = await session.execute(select(HairDay).where(HairDay.master_name == name, HairDay.date == date))
