@@ -32,12 +32,18 @@ from settings import (
 
 
 class RecordState(StatesGroup):
+    """
+        Стейт записей на стрижку
+    """
     master = State()
     date = State()
     record_time = State()
 
 
 class FeedbackState(StatesGroup):
+    """
+        Стейт отзывов
+    """
     master = State()
     feedback = State()
 
